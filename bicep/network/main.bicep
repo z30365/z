@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 param adminUsername string = 'azureuser'
 @secure()
-param adminPassword string = 'Password123!'
+param adminPassword string
 param applicationGateWayName string = 'appGateway-Dev'
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_B2ms'
@@ -358,7 +358,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2023-11-01'= 
 }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01'= {
-  name: 'kv-east-dev-001'
+  name: 'kv-east-dev-001-01'
   location: location
   properties: {
     enabledForDeployment: enabledForDeployment
