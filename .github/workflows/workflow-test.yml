@@ -21,7 +21,7 @@ jobs:
     - uses: azure/arm-deploy@v1
       with:
         deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
+        resourceGroupName: ${{ secrets.RESOURCE_GROUP_NAME }}
         template: ./bicep/network/main-test.bicep
   PROD-deploy:
     runs-on: ubuntu-latest
