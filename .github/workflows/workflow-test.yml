@@ -2,35 +2,17 @@ name: BicepWorkflow-test
 
 on: 
   workflow_dispatch:
-    inputs:
-      env:
-        description: 'Environment'
-        required: true
-        default: 'dev'
-env:
-    AZURE_RESOURCEGROUP_NAME: rg-dev
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  deploy:
+  DEV-deploy:
     runs-on: ubuntu-latest
+    environment: DEV
     steps:
     - uses: actions/checkout@v4
-    - name: Set environment specific variables
-      run: |
-        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-          if [ "${{ github.event.inputs.env }}" == "prod" ]; then
-            echo "AZURE_RESOURCEGROUP_NAME=rg-prod" >> $GITHUB_ENV
-          else
-            echo "AZURE_RESOURCEGROUP_NAME=rg-dev" >> $GITHUB_ENV
-          fi
-        elif [ "${{ github.event_name }}" == "push" ]; then
-          # Default to development environment on push
-          echo "AZURE_RESOURCEGROUP_NAME=rg-dev" >> $GITHUB_ENV
-        fi
     - uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -39,7 +21,14 @@ jobs:
     - uses: azure/arm-deploy@v1
       with:
         deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        resourceGroupName: ${{ ENV.AZURE_RESOURCEGROUP_NAME }}
         template: ./bicep/network/main-test.bicep
-
-  
+  PROD-deploy:
+    runs-on: ubuntu-latest
+    environment: PROD
+    needs: DEV-deploy
+    steps:
+    - uses: actions/checkout@v4
+    - name: run a script
+      run: |
+        echo "This is a PROD environment deployment"
