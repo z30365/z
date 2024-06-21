@@ -3,7 +3,7 @@ name: BicepWorkflow
 on: [workflow_dispatch]
 env:
     AZURE_RESOURCEGROUP_NAME: rg1
-
+    #VM_PASSWORD: ${{ secrete.VM_PASSWORD }}
 permissions:
   id-token: write
   contents: read
@@ -23,5 +23,5 @@ jobs:
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
         template: ./bicep/network/main.bicep
-        parameters: adminPassword=${{ VM_PASSWORD }}
-        # parameters: environmentType=${{ env.ENVIRONMENT }}
+        parameters: adminPassword=${{ secrete.VM_PASSWORD }}
+  
