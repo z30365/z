@@ -1,12 +1,6 @@
-name: BicepWorkflow
+name: BicepWorkflow-test
 
 on: 
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       env:
