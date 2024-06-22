@@ -18,12 +18,12 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    - uses: azure/arm-deploy@v1
-      with:
-        deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-        template: ./bicep/network/main-test.bicep
-        #scope: 'resource-group/${{ vars.AZURE_RESOURCE_GROUP }}'
+    - name: Deploy Bicep using Azure CLI
+      run: |
+        az deployment group create --name ${{ github.run_number }} \
+           --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+           --template-file ./bicep/network/main-test.bicep
+    
   PROD-deploy:
     runs-on: ubuntu-latest
     environment: PROD

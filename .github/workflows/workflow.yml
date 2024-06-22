@@ -2,44 +2,26 @@ name: BicepWorkflow
 
 on: 
   workflow_dispatch:
-    inputs:
-      env:
-        description: 'Environment'
-        required: true
-        default: 'dev'
-env:
-    AZURE_RESOURCEGROUP_NAME: rg-dev
-
+   
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  deploy:
+  DEV-deploy:
     runs-on: ubuntu-latest
+    environment: DEV
     steps:
     - uses: actions/checkout@v4
-    - name: Set environment specific variables
-      run: |
-        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-          if [ "${{ github.event.inputs.env }}" == "prod" ]; then
-            echo "AZURE_RESOURCEGROUP_NAME=rg-prod" >> $GITHUB_ENV
-          else
-            echo "AZURE_RESOURCEGROUP_NAME=rg-dev" >> $GITHUB_ENV
-          fi
-        elif [ "${{ github.event_name }}" == "push" ]; then
-          # Default to development environment on push
-          echo "AZURE_RESOURCEGROUP_NAME=rg-dev" >> $GITHUB_ENV
-        fi
     - uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    - uses: azure/arm-deploy@v1
+    - uses: azure/arm-deploy@v2
       with:
         deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
         template: ./bicep/network/main.bicep
-        parameters: adminPassword=${{ secrets.VM_PASSWORD }}
-  
+        parameters: adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
+        scope: 'resource-group/${{ vars.AZURE_RESOURCE_GROUP }}'
