@@ -52,7 +52,7 @@ jobs:
         failOnStdErr: false
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-        template: ./deploy/main.bicep
+        template: ./deploy/main-test.bicep
         deploymentMode: Incremental
     
   PROD-deploy:
