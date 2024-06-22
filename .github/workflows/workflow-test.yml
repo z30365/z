@@ -31,7 +31,7 @@ jobs:
       with:
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-        template: ./deploy/main.bicep
+        template: ./bicep/network/main-test.bicep
         deploymentMode: Validate
 
   DEV-deploy:
@@ -52,7 +52,7 @@ jobs:
         failOnStdErr: false
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-        template: ./deploy/main-test.bicep
+        template: ./bicep/network/main-test.bicep
         deploymentMode: Incremental
     
   PROD-deploy:
