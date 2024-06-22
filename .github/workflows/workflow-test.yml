@@ -30,7 +30,7 @@ jobs:
       name: Run preflight validation
       with:
         deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ vars.AZURE_RESOURCEGROUP_NAME }}
+        resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
         template: ./deploy/main.bicep
         deploymentMode: Validate
 
@@ -51,7 +51,7 @@ jobs:
       with:
         failOnStdErr: false
         deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ vars.AZURE_RESOURCEGROUP_NAME }}
+        resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
         template: ./deploy/main.bicep
         deploymentMode: Incremental
     
