@@ -13,6 +13,13 @@ jobs:
     environment: DEV
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Lint Bicep files
+      run: |
+        bicep lint ./bicep/network/main-test.bicep
+    - name: Validate Bicep files
+      run: |
+        bicep validate ./bicep/network/main-test.bicep
     - uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
