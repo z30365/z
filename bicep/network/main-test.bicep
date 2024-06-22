@@ -1,4 +1,4 @@
-param test string
+param test string = 'test'
 param location string = resourceGroup().location
 // Virtual Networks
 resource vnet1 'Microsoft.Network/virtualNetworks@2023-11-01' = {
