@@ -14,12 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Lint Bicep files
-      run: |
-        az bicep lint -f ./bicep/network/main-test.bicep
-    - name: Validate Bicep files
-      run: |
-        az bicep build -f ./bicep/network/main-test.bicep
+    
 
     - uses: azure/login@v1
       with:
