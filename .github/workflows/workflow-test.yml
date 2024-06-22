@@ -19,7 +19,8 @@ jobs:
         bicep lint ./bicep/network/main-test.bicep
     - name: Validate Bicep files
       run: |
-        az bicep validate ./bicep/network/main-test.bicep
+        az bicep build ./bicep/network/main-test.bicep
+
     - uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
