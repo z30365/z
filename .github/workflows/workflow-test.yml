@@ -51,7 +51,7 @@ jobs:
       with:
         failOnStdErr: false
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-        template: deploy/main.bicep
+        template: ./bicep/network/main-test.bicep
         additionalArguments: --what-if
 
   DEV-deploy:
