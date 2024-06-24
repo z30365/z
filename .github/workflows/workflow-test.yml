@@ -33,6 +33,7 @@ jobs:
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
         template: ./bicep/network/main.bicep
+        parameters: adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
         deploymentMode: Validate
   preview:
     runs-on: ubuntu-latest
@@ -52,6 +53,7 @@ jobs:
         failOnStdErr: false
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
         template: ./bicep/network/main.bicep
+        parameters: adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
         additionalArguments: --what-if
 
   DEV-deploy:
