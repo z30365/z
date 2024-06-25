@@ -1,27 +1,89 @@
-name: BicepWorkflow
+name: BicepWorkflow-test
 
 on: 
   workflow_dispatch:
-   
+
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  DEV-deploy:
+  lint:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Lint Bicep files
+      run: |
+        az bicep lint -f ./bicep/network/main.bicep
+  validate:
+    runs-on: ubuntu-latest
+    needs: lint
     environment: DEV
     steps:
     - uses: actions/checkout@v4
     - uses: azure/login@v1
+      name: Sign in to Azure
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    - uses: azure/arm-deploy@v2
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
       with:
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
         template: ./bicep/network/main.bicep
         parameters: adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
-        scope: 'resource-group/${{ vars.AZURE_RESOURCE_GROUP }}'
+        deploymentMode: Validate
+  preview:
+    runs-on: ubuntu-latest
+    needs: [validate]
+    environment: DEV
+    steps:
+    - uses: actions/checkout@v4
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - uses: azure/arm-deploy@v1
+      name: Run what-if
+      with:
+        failOnStdErr: false
+        resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
+        template: ./bicep/network/main.bicep
+        parameters: adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
+        additionalArguments: --what-if
+
+  DEV-deploy:
+    runs-on: ubuntu-latest
+    needs: [preview]
+    environment: DEV
+    steps:
+    - uses: actions/checkout@v4
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - uses: azure/arm-deploy@v1
+      name: Deploy to Azure
+      with:
+        failOnStdErr: false
+        deploymentName: ${{ github.run_number }}
+        resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
+        template: ./bicep/network/main.bicep
+        parameters: adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
+        deploymentMode: Incremental
+    
+  PROD-deploy:
+    runs-on: ubuntu-latest
+    environment: PROD
+    needs: DEV-deploy
+    steps:
+    - uses: actions/checkout@v4
+    - name: run a script
+      run: |
+        echo "This is a PROD environment deployment"
