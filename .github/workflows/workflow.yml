@@ -1,4 +1,4 @@
-name: BicepWorkflow-test
+name: BicepWorkflow
 
 on: 
   workflow_dispatch:
