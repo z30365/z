@@ -1,5 +1,7 @@
-param test string = 'test'
+@secure()
+param adminPassword string
 param location string = resourceGroup().location
+
 // Virtual Networks
 resource vnet1 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: 'vnet1'
